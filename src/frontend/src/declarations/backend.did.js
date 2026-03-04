@@ -14,6 +14,7 @@ export const Article = IDL.Record({
   'title' : IDL.Text,
   'source' : IDL.Text,
   'publishedAt' : IDL.Text,
+  'publishedAtUnix' : IDL.Int,
   'description' : IDL.Text,
   'imageUrl' : IDL.Text,
 });
@@ -34,6 +35,7 @@ export const idlFactory = ({ IDL }) => {
     'title' : IDL.Text,
     'source' : IDL.Text,
     'publishedAt' : IDL.Text,
+    'publishedAtUnix' : IDL.Int,
     'description' : IDL.Text,
     'imageUrl' : IDL.Text,
   });

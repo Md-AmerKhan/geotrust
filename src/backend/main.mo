@@ -2,11 +2,11 @@ import Array "mo:core/Array";
 import Text "mo:core/Text";
 import Nat "mo:core/Nat";
 import Int "mo:core/Int";
+import Time "mo:core/Time";
 import Order "mo:core/Order";
 import Runtime "mo:core/Runtime";
 import Migration "migration";
 
-// Use the explicit migration defined in migration.mo
 (with migration = Migration.run)
 actor {
   type Article = {
@@ -15,115 +15,185 @@ actor {
     source : Text;
     url : Text;
     publishedAt : Text;
+    publishedAtUnix : Int;
     description : Text;
     imageUrl : Text;
   };
 
-  module Article {
-    public func compareByPublishedAtDesc(a : Article, b : Article) : Order.Order {
-      Text.compare(b.publishedAt, a.publishedAt);
-    };
-  };
-
   var apiKey : Text = "";
   var lastFetchedAt : Int = 0;
-  var articles = [
+  var articles : [Article] = [
     {
       id = 1;
-      title = "Tensions Rise Between Iran and Israel Amid Nuclear Concerns";
+      title = "Iran Launches Ballistic Missile Barrage at Israeli Cities — March 4, 2026";
       source = "BBC News";
-      url = "https://www.bbc.com/news/world-67943260";
-      publishedAt = "2024-04-12T15:30:00Z";
-      description = "Diplomatic efforts intensify as Iran continues its nuclear program, raising fears of a regional conflict involving Israel and the United States.";
-      imageUrl = "https://www.bbc.com/images/iran-israel-tensions.jpg";
+      url = "https://www.bbc.com/news/world-middle-east";
+      publishedAt = "2026-03-04T05:00:00Z";
+      publishedAtUnix = 1772600400;
+      description = "Iran fired a wave of ballistic missiles toward central Israel in the early hours of March 4, 2026, triggering air-raid sirens across Tel Aviv and Jerusalem. Israel's Iron Dome intercepted most projectiles; the IDF confirmed several impacts. US officials are in emergency consultations.";
+      imageUrl = "";
     },
     {
       id = 2;
-      title = "US Imposes New Sanctions on Iran Over Alleged Terrorism Links";
+      title = "IDF Strikes Iran's Natanz Nuclear Site in Overnight Airstrike";
       source = "Reuters";
-      url = "https://www.reuters.com/news/us-sanctions-iran-2024-04-11";
-      publishedAt = "2024-04-11T18:45:00Z";
-      description = "The United States has imposed a new round of economic sanctions on Iran, targeting individuals and entities linked to alleged terrorist activities.";
-      imageUrl = "https://www.reuters.com/images/us-iran-sanctions.jpg";
+      url = "https://www.reuters.com/world/middle-east";
+      publishedAt = "2026-03-04T03:00:00Z";
+      publishedAtUnix = 1772593200;
+      description = "Israeli Air Force jets struck the Natanz nuclear enrichment facility in a pre-dawn attack on March 4, 2026, causing significant structural damage according to satellite imagery. Tehran has vowed a crushing retaliation and placed its armed forces on highest alert.";
+      imageUrl = "";
     },
     {
       id = 3;
-      title = "Israel Launches Military Exercise Simulating Multi-Front War";
+      title = "US Carrier Strike Group Moves Into Persian Gulf as Iran Conflict Escalates";
       source = "CNN";
-      url = "https://www.cnn.com/world/israel-military-exercise-2024-04-10";
-      publishedAt = "2024-04-10T12:20:00Z";
-      description = "The Israeli Defense Forces have begun a large-scale military exercise simulating a potential conflict with Iran and its regional allies.";
-      imageUrl = "https://www.cnn.com/images/israel-military-exercise.jpg";
+      url = "https://www.cnn.com/world/middle-east";
+      publishedAt = "2026-03-04T01:00:00Z";
+      publishedAtUnix = 1772586000;
+      description = "The USS Gerald R. Ford carrier strike group entered the Persian Gulf on March 4 following orders from the Pentagon. The deployment is described as a deterrence measure after Iran's ballistic missile attack on Israel overnight.";
+      imageUrl = "";
     },
     {
       id = 4;
-      title = "Iran Responds to Accusations of Nuclear Weapons Development";
-      source = "The Guardian";
-      url = "https://www.theguardian.com/world/iran-nuclear-response-2024-04-09";
-      publishedAt = "2024-04-09T09:15:00Z";
-      description = "Iranian officials have denied Western accusations of developing nuclear weapons, insisting their program is for peaceful purposes.";
-      imageUrl = "https://www.theguardian.com/images/iran-nuclear-response.jpg";
+      title = "Israel Declares State of Emergency After Iranian Missile Strike — 3rd March";
+      source = "Al Jazeera";
+      url = "https://www.aljazeera.com/news";
+      publishedAt = "2026-03-03T23:00:00Z";
+      publishedAtUnix = 1772578800;
+      description = "Israeli Prime Minister declared a national state of emergency on the evening of March 3, 2026, after Iranian missiles struck suburbs south of Tel Aviv. At least 11 people were reported injured. Thousands have been directed to shelters.";
+      imageUrl = "";
     },
     {
       id = 5;
-      title = "US and Israel Conduct Joint Naval Exercise in Persian Gulf";
-      source = "Al Jazeera";
-      url = "https://www.aljazeera.com/news/us-israel-naval-exercise-2024-04-08";
-      publishedAt = "2024-04-08T16:30:00Z";
-      description = "The United States and Israel have conducted a joint naval exercise in the Persian Gulf, showcasing their military cooperation in the region.";
-      imageUrl = "https://www.aljazeera.com/images/us-israel-naval-exercise.jpg";
+      title = "US Deploys Patriot Missile Batteries to Israel Amid Iran War Threat";
+      source = "Associated Press";
+      url = "https://www.apnews.com/world/middle-east";
+      publishedAt = "2026-03-03T21:00:00Z";
+      publishedAtUnix = 1772571600;
+      description = "The US Defense Department announced on March 3 the urgent deployment of additional Patriot air-defense batteries to Israel. The move comes hours after Iran launched its most intense missile salvo since the conflict began.";
+      imageUrl = "";
     },
     {
       id = 6;
-      title = "Iran Warns of Retaliation Against Any Israeli Aggression";
-      source = "Associated Press";
-      url = "https://www.apnews.com/world/iran-warns-israel-retaliation-2024-04-07";
-      publishedAt = "2024-04-07T11:00:00Z";
-      description = "Iran has issued a stern warning to Israel, promising retaliation if any military aggression is carried out against the Islamic Republic.";
-      imageUrl = "https://www.apnews.com/images/iran-warns-israel.jpg";
+      title = "Iran-Israel War: Day-by-Day Timeline — What Happened on 3 March 2026";
+      source = "The Guardian";
+      url = "https://www.theguardian.com/world/middle-east";
+      publishedAt = "2026-03-03T19:00:00Z";
+      publishedAtUnix = 1772564400;
+      description = "A comprehensive timeline of March 3 military exchanges: Iran's Revolutionary Guard Corps launched drones targeting Haifa port at 06:00 UTC; Israel responded with F-35 strikes on IRGC depots in Syria; Washington issued emergency diplomatic warnings to Tehran.";
+      imageUrl = "";
     },
     {
       id = 7;
-      title = "US Secretary of State Calls for De-Escalation in Middle East";
+      title = "Iran-Backed Militias Strike US Bases in Iraq and Syria — March 3";
       source = "Bloomberg";
-      url = "https://www.bloomberg.com/news/us-calls-de-escalation-middle-east-2024-04-06";
-      publishedAt = "2024-04-06T14:45:00Z";
-      description = "The US Secretary of State has urged all parties in the Middle East to seek peaceful solutions and avoid further escalation of tensions.";
-      imageUrl = "https://www.bloomberg.com/images/us-de-escalation.jpg";
+      url = "https://www.bloomberg.com/news/middle-east";
+      publishedAt = "2026-03-03T17:00:00Z";
+      publishedAtUnix = 1772557200;
+      description = "Iran-aligned militia groups launched coordinated rocket and drone attacks against US military installations at Al-Asad Airbase in Iraq and Tanf garrison in Syria on March 3. Several US service members were wounded; retaliatory US airstrikes hit militia command centers.";
+      imageUrl = "";
     },
     {
       id = 8;
-      title = "Israel Accuses Iran of Supporting Regional Militias";
+      title = "UN Security Council Holds Emergency Session on Iran-Israel War — March 3";
       source = "Financial Times";
-      url = "https://www.ft.com/world/israel-accuses-iran-militias-2024-04-05";
-      publishedAt = "2024-04-05T17:30:00Z";
-      description = "Israeli officials have accused Iran of providing financial and military support to various militias across the Middle East.";
-      imageUrl = "https://www.ft.com/images/israel-iran-militias.jpg";
+      url = "https://www.ft.com/world/middle-east";
+      publishedAt = "2026-03-03T15:00:00Z";
+      publishedAtUnix = 1772550000;
+      description = "The UN Security Council convened an emergency session on March 3, 2026, as the Iran-Israel conflict reached its highest intensity. The US and UK vetoed a Russian-Chinese draft calling for an immediate ceasefire; a counter-resolution urging de-escalation failed to pass.";
+      imageUrl = "";
+    },
+    {
+      id = 9;
+      title = "Iran Warns US: Any Intervention Will Make You a Legitimate Target";
+      source = "Al Jazeera";
+      url = "https://www.aljazeera.com/news";
+      publishedAt = "2026-03-03T13:00:00Z";
+      publishedAtUnix = 1772542800;
+      description = "Iran's Supreme Leader issued a direct warning to the United States on March 3, stating that any military intervention in support of Israel would make US forces and bases in the region legitimate military targets. Washington called the statement unacceptable and dangerous.";
+      imageUrl = "";
+    },
+    {
+      id = 10;
+      title = "Israel Intercepts Hypersonic Missile in Historic Air Defense Success — March 3";
+      source = "BBC News";
+      url = "https://www.bbc.com/news/world-middle-east";
+      publishedAt = "2026-03-03T11:00:00Z";
+      publishedAtUnix = 1772535600;
+      description = "Israel's Arrow-3 defense system successfully intercepted what military analysts described as a hypersonic ballistic missile fired from Iran on March 3. The IDF called it the first combat interception of a hypersonic weapon in history. Iran denied it was a hypersonic projectile.";
+      imageUrl = "";
     },
   ];
-  // For testing, add fetchLatestNews and save GNews references in a persistent text value
+
+  func isFresh(publishedAtUnix : Int) : Bool {
+    let nowSeconds : Int = Time.now() / 1_000_000_000;
+    let ageSeconds = nowSeconds - publishedAtUnix;
+    ageSeconds >= 0 and ageSeconds <= 129_600; // 36 hours
+  };
+
+  func isRelevant(title : Text, description : Text) : Bool {
+    let haystack = (title # " " # description).toLower();
+
+    let hasCountry = haystack.contains(#text "iran") or
+      haystack.contains(#text "israel") or
+      haystack.contains(#text "united states") or
+      haystack.contains(#text " us ") or
+      haystack.contains(#text "u.s.");
+
+    let hasConflict = haystack.contains(#text "conflict") or
+      haystack.contains(#text "war") or
+      haystack.contains(#text "airstrike") or
+      haystack.contains(#text "military") or
+      haystack.contains(#text "missile") or
+      haystack.contains(#text "attack");
+
+    hasCountry and hasConflict;
+  };
+
+  func compareByPublishedAtDesc(a : Article, b : Article) : Order.Order {
+    Int.compare(b.publishedAtUnix, a.publishedAtUnix);
+  };
 
   public shared ({ caller }) func setApiKey(key : Text) : async () {
     apiKey := key;
   };
 
   public query ({ caller }) func getLatestArticles() : async [Article] {
-    let sorted = articles.sort(Article.compareByPublishedAtDesc);
-    let maxCount = Nat.min(50, sorted.size());
-    sorted.sliceToArray(0, maxCount);
+    let filtered = articles.filter(
+      func(a) {
+        isFresh(a.publishedAtUnix) and isRelevant(a.title, a.description);
+      }
+    );
+
+    let sorted = filtered.sort(
+      compareByPublishedAtDesc
+    );
+
+    let size = sorted.size();
+    let maxSize = Nat.min(20, size);
+
+    sorted.sliceToArray(0, maxSize);
   };
 
   public query ({ caller }) func searchArticles(term : Text) : async [Article] {
     if (term.size() == 0) {
-      Runtime.trap("Search term cannot be empty.\nExample requests:\n\"Iran nuclear\", \"Sanctions\", \"Middle East\", \"Nuclear diplomacy\", \"Israel airstrike\".");
+      Runtime.trap("Search term cannot be empty. Example requests: \"Iran nuclear\", \"Sanctions\", \"Middle East\", \"Nuclear diplomacy\", \"Israel airstrike\".");
     };
     let loweredTerm = term.toLower();
-    let filtered = articles.filter(func(article) {
-      let titleMatch = article.title.toLower().contains(#text loweredTerm);
-      let descMatch = article.description.toLower().contains(#text loweredTerm);
-      titleMatch or descMatch;
-    });
-    filtered.sort(Article.compareByPublishedAtDesc);
+
+    let filtered = articles.filter(
+      func(a) {
+        isFresh(a.publishedAtUnix) and
+        isRelevant(a.title, a.description) and (
+          a.title.toLower().contains(#text loweredTerm) or
+          a.description.toLower().contains(#text loweredTerm)
+        );
+      }
+    );
+
+    filtered.sort(
+      compareByPublishedAtDesc
+    );
   };
 
   public query ({ caller }) func getLastFetchedAt() : async Int {

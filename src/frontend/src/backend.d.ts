@@ -13,6 +13,7 @@ export interface Article {
     title: string;
     source: string;
     publishedAt: string;
+    publishedAtUnix: bigint;
     description: string;
     imageUrl: string;
 }

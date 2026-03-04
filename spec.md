@@ -1,42 +1,24 @@
 # GeoTrust
 
 ## Current State
-The app displays 15 hardcoded articles from 2024 covering various global topics (climate, trade, vaccines, etc.) seeded directly in the Motoko backend. The frontend supports source filtering, text search, and auto-refresh. There is no live news fetching.
+The app displays Iran-Israel-US conflict news with 8 hardcoded articles. The articles have incorrect Unix timestamps (from a previous version) that don't match real March 2026 dates, causing the `isFresh` filter to reject them. The freshness window is 48 hours.
 
 ## Requested Changes (Diff)
 
 ### Add
-- HTTP outcalls from the backend to fetch live news headlines via a public RSS/news API focused on Iran, Israel, and US war/geopolitical tensions
-- Backend caching layer: store fetched articles in stable memory, refresh every 30 minutes automatically
-- `fetchLatestNews` public update method that triggers a fresh HTTP fetch
-- `getLastFetchedAt` query to expose the last fetch timestamp to the frontend
-- Frontend "Last updated X minutes ago" indicator
-- Frontend banner indicating the feed is focused on Iran-Israel-US conflict coverage
+- 10 hardcoded articles with accurate Unix timestamps for March 3–4, 2026 (last 24 hours)
+- Articles covering: Iranian missile barrage, IDF strike on Natanz, US carrier deployment, Israeli state of emergency, US Patriot deployment, day timeline, Iran-backed militia attacks on US bases, UN Security Council session, Iran warning to US, Israel hypersonic missile interception
 
 ### Modify
-- Replace all 15 hardcoded seed articles with articles fetched live from NewsAPI (free tier) or GNews API filtered by keywords: "Iran Israel war", "Iran US military", "Israel Gaza"
-- Backend: replace static `let articles = List.fromArray(...)` with stable `var articles` populated by HTTP outcall
-- Frontend: update empty state copy to reflect the focused conflict topic
-- Frontend: remove generic source filter tabs (BBC/Reuters etc.) since articles now come from a unified live feed; replace with keyword chips (Iran, Israel, US, All)
-- Header subtitle updated to "Live Iran-Israel-US Conflict Coverage"
+- Fix all `publishedAtUnix` values to accurate Unix timestamps matching the ISO date strings
+- Change freshness window from 48 hours (172,800s) to 36 hours (129,600s) to safely cover last 24h while allowing some buffer
+- Update articles array with 10 richer, more specific articles dated 2026-03-03 to 2026-03-04
 
 ### Remove
-- All 15 hardcoded seed articles
-- Static source filter (BBC World, Reuters, AP, Al Jazeera, The Guardian) — replaced by topic chips
-- `getSources()` backend method (no longer needed)
-- `getArticlesBySource()` backend method (replaced by keyword filtering on live data)
+- Old 8 articles with incorrect timestamps
 
 ## Implementation Plan
-1. Select `http-outcalls` Caffeine component to enable backend HTTP calls
-2. Regenerate Motoko backend:
-   - Stable `var articles : [Article]` storage
-   - `fetchLatestNews()` async update that calls GNews API with query "Iran Israel US war" filtered to last 24h, parses JSON response, maps to Article records
-   - Timer-based auto-refresh every 30 minutes using `setTimer`
-   - `getLatestArticles()` returns cached articles sorted by date descending
-   - `searchArticles(term)` filters cached articles
-   - `getLastFetchedAt()` returns last fetch timestamp
-3. Update frontend:
-   - Replace source filter chips with topic chips: All / Iran / Israel / US
-   - Add "Live feed" badge and last-updated timestamp in header
-   - Update empty state and header subtitle to reflect conflict focus
-   - Wire `fetchLatestNews` call on mount and every 30 minutes
+1. Regenerate backend with corrected article data: 10 articles with accurate Unix timestamps for March 3-4 2026
+2. Timestamps: 1772535600 (Mar3 11:00Z), 1772542800 (Mar3 13:00Z), 1772550000 (Mar3 15:00Z), 1772557200 (Mar3 17:00Z), 1772564400 (Mar3 19:00Z), 1772571600 (Mar3 21:00Z), 1772578800 (Mar3 23:00Z), 1772586000 (Mar4 01:00Z), 1772593200 (Mar4 03:00Z), 1772600400 (Mar4 05:00Z)
+3. Freshness window: 36 hours = 129,600 seconds
+4. No frontend changes needed

@@ -2,7 +2,11 @@ import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
 import { motion } from "motion/react";
 import type { Article } from "../backend.d";
-import { formatRelativeTime } from "../utils/time";
+import {
+  formatAbsoluteTime,
+  formatRelativeTime,
+  isWithinHours,
+} from "../utils/time";
 
 interface ConflictTag {
   label: string;
@@ -59,7 +63,9 @@ export function ArticleCard({ article, index }: ArticleCardProps) {
   const badgeClass =
     SOURCE_BADGE_CLASSES[article.source] ?? "bg-muted text-foreground";
 
-  const timeDisplay = formatRelativeTime(article.publishedAt);
+  const relativeTime = formatRelativeTime(article.publishedAt);
+  const absoluteTime = formatAbsoluteTime(article.publishedAt);
+  const isRecent = isWithinHours(article.publishedAt, 24);
   const conflictTags = getConflictTags(article.title, article.description);
   const hasImage = article.imageUrl && article.imageUrl.trim() !== "";
 
@@ -99,12 +105,19 @@ export function ArticleCard({ article, index }: ArticleCardProps) {
             <span className="inline-block w-1.5 h-1.5 rounded-full bg-white/60" />
             {article.source}
           </span>
-          <time
-            className="text-xs text-muted-foreground font-medium tabular-nums"
-            title={article.publishedAt}
-          >
-            {timeDisplay}
-          </time>
+          <div className="flex flex-col items-end gap-0.5">
+            <time
+              className="text-xs text-muted-foreground font-medium tabular-nums"
+              title={absoluteTime}
+            >
+              {absoluteTime}
+            </time>
+            <span
+              className={`text-[10px] font-medium tabular-nums ${isRecent ? "text-green-400/80" : "text-muted-foreground/60"}`}
+            >
+              {relativeTime}
+            </span>
+          </div>
         </div>
 
         {/* Conflict tags */}

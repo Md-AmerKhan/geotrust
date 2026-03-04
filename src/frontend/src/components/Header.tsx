@@ -100,10 +100,9 @@ export function Header({
             <span className="text-xs text-red-400/80 font-medium tracking-wide">
               Live conflict coverage — Iran · Israel · US
             </span>
-            <Shield
-              className="h-3 w-3 text-red-500/50 ml-auto shrink-0"
-              strokeWidth={1.5}
-            />
+            <span className="ml-auto text-[10px] text-muted-foreground/70 font-medium tracking-widest uppercase shrink-0">
+              Mar 3–4, 2026 · Last 24 hrs
+            </span>
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { Shield, Siren } from "lucide-react";
+import { Clock, Shield, Siren } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { ArticleCard } from "./components/ArticleCard";
@@ -73,7 +73,7 @@ export default function App() {
 
       {/* Main content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Article count bar */}
+        {/* Article count bar + LAST 24 HOURS badge */}
         <AnimatePresence mode="wait">
           {!isLoading && !error && (
             <motion.div
@@ -82,42 +82,53 @@ export default function App() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="flex items-center gap-2 mb-6"
+              className="flex items-center justify-between gap-2 mb-6 flex-wrap"
             >
-              <Siren
-                className="h-4 w-4 text-muted-foreground"
-                strokeWidth={1.5}
-              />
-              <span className="text-sm text-muted-foreground">
-                {articles.length > 0 ? (
-                  <>
-                    Showing{" "}
-                    <span className="text-foreground font-medium">
-                      {articles.length}
-                    </span>{" "}
-                    {articles.length === 1
-                      ? "conflict report"
-                      : "conflict reports"}
-                    {isSearch && (
-                      <span className="ml-1">
-                        for{" "}
-                        <span className="text-primary font-medium">
-                          &ldquo;{searchTerm}&rdquo;
+              <div className="flex items-center gap-2">
+                <Siren
+                  className="h-4 w-4 text-muted-foreground"
+                  strokeWidth={1.5}
+                />
+                <span className="text-sm text-muted-foreground">
+                  {articles.length > 0 ? (
+                    <>
+                      Showing{" "}
+                      <span className="text-foreground font-medium">
+                        {articles.length}
+                      </span>{" "}
+                      {articles.length === 1
+                        ? "conflict report"
+                        : "conflict reports"}
+                      {isSearch && (
+                        <span className="ml-1">
+                          for{" "}
+                          <span className="text-primary font-medium">
+                            &ldquo;{searchTerm}&rdquo;
+                          </span>
                         </span>
-                      </span>
-                    )}
-                    {activeTopic !== "All" && !isSearch && (
-                      <span className="ml-1">
-                        on{" "}
-                        <span className="text-primary font-medium">
-                          {activeTopic}
+                      )}
+                      {activeTopic !== "All" && !isSearch && (
+                        <span className="ml-1">
+                          on{" "}
+                          <span className="text-primary font-medium">
+                            {activeTopic}
+                          </span>
                         </span>
-                      </span>
-                    )}
-                  </>
-                ) : (
-                  "No conflict reports to show"
-                )}
+                      )}
+                    </>
+                  ) : (
+                    "No conflict reports to show"
+                  )}
+                </span>
+              </div>
+
+              {/* LAST 24 HOURS badge */}
+              <span
+                data-ocid="feed.badge"
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold tracking-widest uppercase border border-green-500/30 bg-green-500/10 text-green-400"
+              >
+                <Clock className="h-3 w-3" strokeWidth={2} />
+                Last 24 Hours
               </span>
             </motion.div>
           )}

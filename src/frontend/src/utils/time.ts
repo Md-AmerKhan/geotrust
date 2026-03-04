@@ -34,3 +34,52 @@ export function formatRelativeTime(input: bigint | string): string {
     year: "numeric",
   });
 }
+
+/**
+ * Format a date as "Mar 3, 2026 · 11:00 UTC"
+ */
+export function formatAbsoluteTime(input: bigint | string): string {
+  let date: Date;
+
+  if (typeof input === "bigint") {
+    date = new Date(Number(input) * 1000);
+  } else {
+    date = new Date(input);
+  }
+
+  if (Number.isNaN(date.getTime())) return "";
+
+  const datePart = date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+
+  const timePart = date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "UTC",
+  });
+
+  return `${datePart} · ${timePart} UTC`;
+}
+
+/**
+ * Returns true if the date is within the last N hours.
+ */
+export function isWithinHours(input: bigint | string, hours: number): boolean {
+  let date: Date;
+
+  if (typeof input === "bigint") {
+    date = new Date(Number(input) * 1000);
+  } else {
+    date = new Date(input);
+  }
+
+  if (Number.isNaN(date.getTime())) return false;
+
+  const diffMs = Date.now() - date.getTime();
+  return diffMs <= hours * 60 * 60 * 1000;
+}
