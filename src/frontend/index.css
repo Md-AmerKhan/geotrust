@@ -1,0 +1,155 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --radius: 0.75rem;
+
+    /* GeoTrust Dark Theme - Only dark mode since app is always dark */
+    --background: 0.138 0.025 258;
+    --foreground: 0.942 0.012 258;
+    --card: 0.178 0.028 255;
+    --card-foreground: 0.942 0.012 258;
+    --popover: 0.178 0.028 255;
+    --popover-foreground: 0.942 0.012 258;
+    --primary: 0.72 0.167 217;
+    --primary-foreground: 0.1 0.025 258;
+    --secondary: 0.22 0.032 255;
+    --secondary-foreground: 0.85 0.02 258;
+    --muted: 0.22 0.032 255;
+    --muted-foreground: 0.58 0.045 258;
+    --accent: 0.72 0.167 217;
+    --accent-foreground: 0.1 0.025 258;
+    --destructive: 0.577 0.245 27.325;
+    --destructive-foreground: 0.985 0 0;
+    --border: 0.26 0.04 258;
+    --input: 0.22 0.032 255;
+    --ring: 0.72 0.167 217;
+
+    /* Source badge colors */
+    --bbc: 0.53 0.22 27;
+    --reuters: 0.68 0.18 52;
+    --ap: 0.52 0.19 240;
+    --aljazeera: 0.56 0.16 155;
+    --guardian: 0.55 0.22 293;
+
+    /* Glow */
+    --glow-accent: oklch(0.72 0.167 217 / 0.15);
+    --glow-accent-strong: oklch(0.72 0.167 217 / 0.3);
+
+    --chart-1: 0.646 0.222 41.116;
+    --chart-2: 0.6 0.118 184.704;
+    --chart-3: 0.398 0.07 227.392;
+    --chart-4: 0.828 0.189 84.429;
+    --chart-5: 0.769 0.188 70.08;
+    --sidebar: 0.178 0.028 255;
+    --sidebar-foreground: 0.942 0.012 258;
+    --sidebar-primary: 0.72 0.167 217;
+    --sidebar-primary-foreground: 0.1 0.025 258;
+    --sidebar-accent: 0.22 0.032 255;
+    --sidebar-accent-foreground: 0.85 0.02 258;
+    --sidebar-border: 0.26 0.04 258;
+    --sidebar-ring: 0.72 0.167 217;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    color-scheme: dark;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+  
+  .card-glow {
+    box-shadow: 0 0 0 1px oklch(var(--border)), 0 4px 24px oklch(0.72 0.167 217 / 0);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+  
+  .card-glow:hover {
+    box-shadow: 0 0 0 1px oklch(0.72 0.167 217 / 0.4), 0 8px 32px oklch(0.72 0.167 217 / 0.12), 0 0 0 0 transparent;
+    transform: translateY(-2px);
+  }
+
+  .source-badge-bbc {
+    background-color: oklch(var(--bbc));
+    color: white;
+  }
+  .source-badge-reuters {
+    background-color: oklch(var(--reuters));
+    color: white;
+  }
+  .source-badge-ap {
+    background-color: oklch(var(--ap));
+    color: white;
+  }
+  .source-badge-aljazeera {
+    background-color: oklch(var(--aljazeera));
+    color: white;
+  }
+  .source-badge-guardian {
+    background-color: oklch(var(--guardian));
+    color: white;
+  }
+
+  .why-matters-border {
+    border-left: 3px solid oklch(0.72 0.167 217);
+  }
+
+  .skeleton-pulse {
+    animation: skeleton-shimmer 1.6s ease-in-out infinite;
+    background: linear-gradient(
+      90deg,
+      oklch(0.22 0.03 258) 0%,
+      oklch(0.28 0.04 258) 50%,
+      oklch(0.22 0.03 258) 100%
+    );
+    background-size: 200% 100%;
+  }
+
+  @keyframes skeleton-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  .header-blur {
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background: oklch(0.138 0.025 258 / 0.9);
+  }
+
+  .noise-bg {
+    position: relative;
+  }
+
+  .noise-bg::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .spin {
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+}
